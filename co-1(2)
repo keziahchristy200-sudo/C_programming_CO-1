@@ -1,0 +1,64 @@
+
+#include <stdio.h>
+#include <limits.h>
+#include <float.h>
+
+typedef unsigned short meter_t;
+
+unsigned int consumption(meter_t previous, meter_t current)
+{
+    return (meter_t)(current - previous);
+}
+
+int main(void)
+{
+    printf("DATA TYPE SIZES\n");
+
+    printf("char = %zu bytes\n", sizeof(char));
+    printf("short = %zu bytes\n", sizeof(short));
+    printf("int = %zu bytes\n", sizeof(int));
+    printf("long = %zu bytes\n", sizeof(long));
+    printf("long long = %zu bytes\n", sizeof(long long));
+    printf("float = %zu bytes\n", sizeof(float));
+    printf("double = %zu bytes\n", sizeof(double));
+
+    printf("\nINTEGER RANGES\n");
+
+    printf("SHRT_MIN = %d\n", SHRT_MIN);
+    printf("SHRT_MAX = %d\n", SHRT_MAX);
+    printf("USHRT_MAX = %u\n", USHRT_MAX);
+    printf("INT_MIN = %d\n", INT_MIN);
+    printf("INT_MAX = %d\n", INT_MAX);
+    printf("UINT_MAX = %u\n", UINT_MAX);
+    printf("LLONG_MAX = %lld\n", LLONG_MAX);
+
+    printf("\nFLOAT RANGES\n");
+
+    printf("FLT_MAX = %e\n", FLT_MAX);
+    printf("DBL_MAX = %e\n", DBL_MAX);
+    printf("Float precision = %d\n", FLT_DIG);
+    printf("Double precision = %d\n", DBL_DIG);
+
+    printf("\nMETER CONSUMPTION\n");
+
+    printf("Consumption: %u units\n",
+           consumption(1200, 1530));
+
+    printf("Consumption: %u units\n",
+           consumption(65400, 120));
+
+    printf("\nMONEY CALCULATION\n");
+
+    long long total_paise = 0;
+
+    for (int i = 0; i < 4000; i++)
+    {
+        total_paise += 10;
+    }
+
+    printf("Total in paise = %lld\n", total_paise);
+    printf("Total in rupees = Rs. %.2f\n",
+           total_paise / 100.0);
+
+    return 0;
+}
