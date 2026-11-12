@@ -1,0 +1,92 @@
+
+#include <stdio.h>
+
+#define SLAB1_UNITS 100
+#define SLAB2_UNITS 200
+
+#define RATE1_PAISE 0
+#define RATE2_PAISE 225
+#define RATE3_PAISE 450
+
+#define FIXED_CHARGE_PAISE 5000L
+
+#define METER_MAX 65535
+
+long compute_bill(int units)
+{
+    long paise = FIXED_CHARGE_PAISE;
+
+    if (units < 0)
+        return -1;
+
+    if (units > SLAB1_UNITS)
+    {
+        if (units <= SLAB2_UNITS)
+        {
+            paise += (units - SLAB1_UNITS)
+                     * RATE2_PAISE;
+        }
+        else
+        {
+            paise += (SLAB2_UNITS - SLAB1_UNITS)
+                     * RATE2_PAISE;
+
+            paise += (units - SLAB2_UNITS)
+                     * RATE3_PAISE;
+        }
+    }
+
+    return paise;
+}
+
+int main(void)
+{
+    int previous, current;
+    unsigned int units;
+    long bill;
+
+    printf("Enter previous meter reading: ");
+
+    if (scanf("%d", &previous) != 1)
+    {
+        printf("Invalid input!\n");
+        return 1;
+    }
+
+    printf("Enter current meter reading: ");
+
+    if (scanf("%d", &current) != 1)
+    {
+        printf("Invalid input!\n");
+        return 1;
+    }
+
+    if (previous < 0 || previous > METER_MAX ||
+        current < 0 || current > METER_MAX)
+    {
+        printf("Invalid meter reading!\n");
+        return 1;
+    }
+
+    // Calculate consumption with rollover
+    if (current >= previous)
+    {
+        units = current - previous;
+    }
+    else
+    {
+        units = (METER_MAX - previous) + 1 + current;
+    }
+
+    bill = compute_bill(units);
+
+    printf("\n----- ELECTRICITY BILL -----\n");
+    printf("Previous Reading: %d\n", previous);
+    printf("Current Reading: %d\n", current);
+    printf("Units Consumed: %u\n", units);
+
+    printf("Total Bill: Rs %ld.%02ld\n",
+           bill / 100, bill % 100);
+
+    return 0;
+}
