@@ -1,0 +1,61 @@
+
+#include <stdio.h>
+#include <limits.h>
+#include <math.h>
+
+int main(void)
+{
+    int units = 150;
+    int a = 5, b = 2;
+
+    long large_value = 3000000000L;
+
+    float charge = 12.345f;
+    long paise;
+
+    // 1. Integer division
+    printf("Integer division: %d\n", a / b);
+
+    // 2. Integer division before conversion
+    printf("Wrong conversion: %.2f\n", (float)(a / b));
+
+    // 3. Correct floating-point division
+    printf("Correct division: %.2f\n", (float)a / b);
+
+    // 4. Explicit type conversion
+    printf("Large long value: %ld\n", large_value);
+    printf("Large value converted to int: %d\n",
+           (int)large_value);
+
+    // 5. Rounding fractional charge to paise
+    paise = (long)round(charge * 100);
+    printf("Charge in paise: %ld\n", paise);
+
+    // 6. Units conversion
+    printf("Units divided by 100: %d\n", units / 100);
+    printf("Correct units division: %.2f\n",
+           (double)units / 100);
+
+    // 7. Integer paise calculation
+    long long total_paise = 0;
+
+    for (int i = 0; i < 4000; i++)
+    {
+        total_paise += 10;
+    }
+
+    printf("Integer total: Rs. %.2f\n",
+           total_paise / 100.0);
+
+    // 8. Float calculation
+    float float_total = 0.0f;
+
+    for (int i = 0; i < 4000; i++)
+    {
+        float_total += 0.10f;
+    }
+
+    printf("Float total: Rs. %.2f\n", float_total);
+
+    return 0;
+}
