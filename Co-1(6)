@@ -1,0 +1,87 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(void)
+{
+    int household_number;
+    unsigned int units;
+    long energy_charge;
+    long long total_paise;
+    float rate;
+    double amount;
+    char category;
+    char name[50];
+
+    printf("Enter Household Number: ");
+    if (scanf("%d", &household_number) != 1)
+    {
+        printf("Invalid household number!\n");
+        return 1;
+    }
+
+    printf("Enter Units Consumed: ");
+    if (scanf("%u", &units) != 1)
+    {
+        printf("Invalid units!\n");
+        return 1;
+    }
+
+    printf("Enter Energy Charge in Paise: ");
+    if (scanf("%ld", &energy_charge) != 1)
+    {
+        printf("Invalid energy charge!\n");
+        return 1;
+    }
+
+    printf("Enter Total Amount in Paise: ");
+    if (scanf("%lld", &total_paise) != 1)
+    {
+        printf("Invalid total amount!\n");
+        return 1;
+    }
+
+    printf("Enter Rate: ");
+    if (scanf("%f", &rate) != 1)
+    {
+        printf("Invalid rate!\n");
+        return 1;
+    }
+
+    printf("Enter Amount: ");
+    if (scanf("%lf", &amount) != 1)
+    {
+        printf("Invalid amount!\n");
+        return 1;
+    }
+
+    printf("Enter Category (D/C): ");
+    if (scanf(" %c", &category) != 1)
+    {
+        printf("Invalid category!\n");
+        return 1;
+    }
+
+    printf("Enter Customer Name: ");
+    if (scanf("%49s", name) != 1)
+    {
+        printf("Invalid name!\n");
+        return 1;
+    }
+
+    printf("\n----- ELECTRICITY BILL -----\n");
+
+    printf("Household Number: %d\n", household_number);
+    printf("Units Consumed: %u\n", units);
+    printf("Energy Charge: Rs %ld.%02ld\n",
+           energy_charge / 100, energy_charge % 100);
+    printf("Total Bill: Rs %lld.%02lld\n",
+           total_paise / 100, total_paise % 100);
+    printf("Rate: %.2f\n", rate);
+    printf("Amount: %.2lf\n", amount);
+    printf("Category: %c\n", category);
+    printf("Customer Name: %s\n", name);
+
+    return 0;
+}
