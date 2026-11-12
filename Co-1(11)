@@ -1,0 +1,72 @@
+
+#include <stdio.h>
+#include <limits.h>
+
+#define SLAB1_UNITS 100
+#define SLAB2_UNITS 200
+
+#define RATE1_PAISE 0LL
+#define RATE2_PAISE 225LL
+#define RATE3_PAISE 450LL
+
+#define FIXED_CHARGE_PAISE 5000LL
+
+long long calculateBill(int units)
+{
+    long long energy = 0;
+
+    if (units <= SLAB1_UNITS)
+    {
+        energy = units * RATE1_PAISE;
+    }
+    else if (units <= SLAB2_UNITS)
+    {
+        energy = SLAB1_UNITS * RATE1_PAISE
+               + (units - SLAB1_UNITS) * RATE2_PAISE;
+    }
+    else
+    {
+        energy = SLAB1_UNITS * RATE1_PAISE
+               + (SLAB2_UNITS - SLAB1_UNITS) * RATE2_PAISE
+               + (units - SLAB2_UNITS) * RATE3_PAISE;
+    }
+
+    return energy + FIXED_CHARGE_PAISE;
+}
+
+int main()
+{
+    int units[] = {50, 100, 150, 250, 400};
+    int n = 5;
+
+    long long districtTotal = 0;
+    int i;
+
+    printf("ELECTRICITY BILL REPORT\n");
+
+    for (i = 0; i < n; i++)
+    {
+        long long bill = calculateBill(units[i]);
+
+        printf("Consumer %d: Units = %d, Bill = Rs. %.2f\n",
+               i + 1, units[i], bill / 100.0);
+
+        if (districtTotal > LLONG_MAX - bill)
+        {
+            printf("District total overflow!\n");
+            return 1;
+        }
+
+        districtTotal += bill;
+    }
+
+    printf("\nDistrict Total = Rs. %.2f\n",
+           districtTotal / 100.0);
+
+    printf("\nData Type Sizes:\n");
+    printf("int = %zu bytes\n", sizeof(int));
+    printf("long = %zu bytes\n", sizeof(long));
+    printf("long long = %zu bytes\n", sizeof(long long));
+
+    return 0;
+}
