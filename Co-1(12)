@@ -1,0 +1,173 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+#define CONFIG_FILE "tariff.txt"
+#define READING_FILE "readings.txt"
+
+typedef struct
+{
+    int slab1;
+    int slab2;
+
+    long long rate1;
+    long long rate2;
+    long long rate3;
+    long long fixedCharge;
+
+    int peakPercent;
+} Tariff;
+
+int loadTariff(Tariff *t)
+{
+    FILE *fp = fopen(CONFIG_FILE, "r");
+
+    if (fp == NULL)
+        return 0;
+
+    char key[50];
+    char line[100];
+    int value;
+
+    while (fgets(line, sizeof(line), fp))
+    {
+        if (sscanf(line, "%49[^=]=%d", key, &value) != 2)
+            continue;
+
+        if (strcmp(key, "SLAB1_UNITS") == 0)
+            t->slab1 = value;
+
+        else if (strcmp(key, "SLAB2_UNITS") == 0)
+            t->slab2 = value;
+
+        else if (strcmp(key, "RATE1") == 0)
+            t->rate1 = value;
+
+        else if (strcmp(key, "RATE2") == 0)
+            t->rate2 = value;
+
+        else if (strcmp(key, "RATE3") == 0)
+            t->rate3 = value;
+
+        else if (strcmp(key, "FIXED_CHARGE") == 0)
+            t->fixedCharge = value;
+
+        else if (strcmp(key, "PEAK_PERCENT") == 0)
+            t->peakPercent = value;
+    }
+
+    fclose(fp);
+
+    return t->slab1 > 0 &&
+           t->slab2 > t->slab1 &&
+           t->rate1 >= 0 &&
+           t->rate2 >= 0 &&
+           t->rate3 >= 0 &&
+           t->fixedCharge >= 0 &&
+           t->peakPercent >= 0;
+}
+
+long long getRate(long long totalWh, Tariff t)
+{
+    long long slab1Wh = (long long)t.slab1 * 1000;
+    long long slab2Wh = (long long)t.slab2 * 1000;
+
+    if (totalWh < slab1Wh)
+        return t.rate1;
+
+    if (totalWh < slab2Wh)
+        return t.rate2;
+
+    return t.rate3;
+}
+
+int main()
+{
+    Tariff t = {0};
+
+    if (!loadTariff(&t))
+    {
+        printf("Error loading tariff configuration.\n");
+        return 1;
+    }
+
+    FILE *fp = fopen(READING_FILE, "r");
+
+    if (fp == NULL)
+    {
+        printf("Cannot open readings file.\n");
+        return 1;
+    }
+
+    int hour, minute;
+    long long wh;
+
+    long long totalWh = 0;
+    long double energyCharge = 0;
+
+    while (fscanf(fp, "%d %d %lld",
+                  &hour, &minute, &wh) == 3)
+    {
+        if (hour < 0 || hour > 23 ||
+            minute < 0 || minute > 59 ||
+            minute % 15 != 0 || wh < 0)
+        {
+            printf("Invalid meter reading.\n");
+            fclose(fp);
+            return 1;
+        }
+
+        int peak = (hour >= 18 && hour < 22);
+
+        long long remainingWh = wh;
+
+        while (remainingWh > 0)
+        {
+            long long rate = getRate(totalWh, t);
+
+            long long nextLimit;
+
+            if (totalWh < (long long)t.slab1 * 1000)
+                nextLimit = (long long)t.slab1 * 1000;
+            else if (totalWh < (long long)t.slab2 * 1000)
+                nextLimit = (long long)t.slab2 * 1000;
+            else
+                nextLimit = totalWh + remainingWh;
+
+            long long availableWh = nextLimit - totalWh;
+
+            if (availableWh > remainingWh)
+                availableWh = remainingWh;
+
+            long double multiplier = 1.0L;
+
+            if (peak)
+                multiplier += t.peakPercent / 100.0L;
+
+            energyCharge +=
+                ((long double)availableWh * rate / 1000.0L)
+                * multiplier;
+
+            totalWh += availableWh;
+            remainingWh -= availableWh;
+        }
+    }
+
+    fclose(fp);
+
+    long long finalBill =
+        (long long)roundl(energyCharge + t.fixedCharge);
+
+    printf("\nSMART METER BILL\n");
+    printf("Total energy: %.3f kWh\n", totalWh / 1000.0);
+    printf("Energy charge: Rs. %.2Lf\n",
+           energyCharge / 100.0L);
+    printf("Fixed charge: Rs. %.2f\n",
+           t.fixedCharge / 100.0);
+    printf("Final bill: Rs. %.2f\n",
+           finalBill / 100.0);
+
+    return 0;
+}
