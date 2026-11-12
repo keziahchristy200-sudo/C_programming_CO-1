@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <limits.h>
+#include <float.h>
+
+int main()
+{
+    printf("int size: %zu bytes\n", sizeof(int));
+    printf("long size: %zu bytes\n", sizeof(long));
+    printf("long long size: %zu bytes\n", sizeof(long long));
+    printf("float size: %zu bytes\n", sizeof(float));
+    printf("double size: %zu bytes\n", sizeof(double));
+
+    printf("\nINT_MAX = %d\n", INT_MAX);
+    printf("LONG_MAX = %ld\n", LONG_MAX);
+    printf("LLONG_MAX = %lld\n", LLONG_MAX);
+
+    printf("\nFLT_DIG = %d\n", FLT_DIG);
+    printf("DBL_DIG = %d\n", DBL_DIG);
+
+    return 0;
+}
