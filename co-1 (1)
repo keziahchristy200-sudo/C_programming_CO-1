@@ -1,0 +1,74 @@
+
+#include <stdio.h>
+
+int main()
+{
+    // Constants
+    const float DOMESTIC_RATE = 2.50;
+    const float COMMERCIAL_RATE = 5.00;
+    const float DOMESTIC_FIXED = 50.00;
+    const float COMMERCIAL_FIXED = 100.00;
+
+    // Input variables
+    int household_number;
+    int previous_reading, current_reading;
+    int units;
+    int category;
+
+    // Output variables
+    float energy_charge, fixed_charge, total;
+
+    // Get input
+    printf("Enter Household Number: ");
+    scanf("%d", &household_number);
+
+    printf("Enter Previous Reading: ");
+    scanf("%d", &previous_reading);
+
+    printf("Enter Current Reading: ");
+    scanf("%d", &current_reading);
+
+    printf("Select Category (1-Domestic, 2-Commercial): ");
+    scanf("%d", &category);
+
+    // Validate meter readings
+    if (previous_reading < 0 ||
+        current_reading < previous_reading)
+    {
+        printf("Invalid meter readings!\n");
+        return 0;
+    }
+
+    // Calculate units
+    units = current_reading - previous_reading;
+
+    // Calculate charges
+    if (category == 1)
+    {
+        energy_charge = units * DOMESTIC_RATE;
+        fixed_charge = DOMESTIC_FIXED;
+    }
+    else if (category == 2)
+    {
+        energy_charge = units * COMMERCIAL_RATE;
+        fixed_charge = COMMERCIAL_FIXED;
+    }
+    else
+    {
+        printf("Invalid category!\n");
+        return 0;
+    }
+
+    // Calculate total
+    total = energy_charge + fixed_charge;
+
+    // Display bill
+    printf("\n----- ELECTRICITY BILL -----\n");
+    printf("Household Number: %d\n", household_number);
+    printf("Units Consumed: %d\n", units);
+    printf("Energy Charge: Rs. %.2f\n", energy_charge);
+    printf("Fixed Charge: Rs. %.2f\n", fixed_charge);
+    printf("Total Bill: Rs. %.2f\n", total);
+
+    return 0;
+}
